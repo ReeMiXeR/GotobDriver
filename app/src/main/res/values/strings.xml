@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Gotob Partner</string>
+    <string name="registration_main">Регистрация</string>
+    <string name="enter_main">Войти</string>
+</resources>

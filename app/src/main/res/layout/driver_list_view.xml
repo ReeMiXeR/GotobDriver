@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Номер рейса: "
+        android:textSize="18sp"
+        android:id="@+id/_trip_number_view"
+        android:layout_marginLeft="27dp"
+        android:layout_marginStart="27dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="23dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/trip_id_view"
+        android:text="99"
+        android:textSize="18sp"
+        android:layout_alignTop="@+id/_trip_number_view"
+        android:layout_toRightOf="@+id/_trip_number_view"
+        android:layout_toEndOf="@+id/_trip_number_view" />
+    <TextView
+        android:id="@+id/depart_time_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2016-07-05 01:27:10"
+        android:textSize="18dp"
+        android:layout_below="@+id/_trip_number_view"
+        android:layout_alignLeft="@+id/_trip_number_view"
+        android:layout_alignStart="@+id/_trip_number_view" />
+
+    <TextView
+        android:id="@+id/arrive_time_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2016-07-05 01:27:10"
+        android:textSize="18dp"
+        android:layout_below="@+id/depart_time_view"
+        android:layout_alignLeft="@+id/depart_time_view"
+        android:layout_alignStart="@+id/depart_time_view" />
+
+    <TextView
+        android:id="@+id/depart_point_view"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kemerovo"
+        android:textSize="18dp"
+        android:layout_alignTop="@+id/arrive_time_view"
+        android:layout_toRightOf="@+id/arrive_time_view"
+        android:layout_toEndOf="@+id/arrive_time_view"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp" />
+
+    <TextView
+        android:id="@+id/arrive_point_view"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:text="Kukevo"
+        android:textSize="18dp"
+        android:layout_alignTop="@+id/depart_time_view"
+        android:layout_alignLeft="@+id/depart_point_view"
+        android:layout_alignStart="@+id/depart_point_view" />
+
+    <TextView
+        android:id="@+id/seats_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="8"
+        android:textSize="18dp"
+        android:layout_above="@+id/depart_point_view"
+        android:layout_alignLeft="@+id/price_view"
+        android:layout_alignStart="@+id/price_view" />
+
+    <TextView
+        android:id="@+id/price_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="300"
+        android:textSize="18dp"
+        android:layout_marginLeft="27dp"
+        android:layout_marginStart="27dp"
+        android:layout_alignTop="@+id/depart_point_view"
+        android:layout_toRightOf="@+id/depart_point_view"
+        android:layout_toEndOf="@+id/depart_point_view" />
+
+</RelativeLayout>
