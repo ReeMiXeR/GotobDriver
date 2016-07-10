@@ -26,10 +26,9 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-/**
- * Created by bezlepkin on 18.04.16.
- */
+
 public class LoginActivity extends AppCompatActivity {
+    final static String LOG_TAG = LoginActivity.class.getSimpleName();
     private String login_str = null;
     private String password_str = null;
 
@@ -38,35 +37,40 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setTitle("Login");
 
     }
 
+    //обработчик нажатий кнопок на LoginActivity, привязан через XML файл login_activity
     public void buttonClickedLogin(View v){
         if (v.getId() == R.id.button_login){
+            //получение введенного пароля и логина в string из view
             EditText login_view = (EditText) findViewById(R.id.login_text);
             login_str = login_view.getText().toString();
+
             EditText password_view = (EditText) findViewById(R.id.password_text);
             password_str = password_view.getText().toString();
-            Log.e("aaaa", login_str + password_str);
-            AsyncTaskRunner task = new AsyncTaskRunner();
 
+            //отправка данных на сервер и получение ответа
+            AsyncTaskRunner task = new AsyncTaskRunner();
             String[] strDriverData = new String[6];
             try {
                 strDriverData = task.execute("a").get();
             }catch (Exception e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "Error: ", e);
             }
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("token", strDriverData[1]);
-            editor.putString("id", strDriverData[0]);
-            editor.apply();
+            if (strDriverData != null) {
+                //сохранение токена и ИД водителя в настройках телефона
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("token", strDriverData[1]);
+                editor.putString("id", strDriverData[0]);
+                editor.apply();
 
-            Intent intent = new Intent(this, DriverActivity.class);
-            //intent.putExtra("strDriverData", strDriverData);
-            startActivity(intent);
+                //запуск DriverActivity
+                Intent intent = new Intent(this, DriverActivity.class);
+                startActivity(intent);
+            }
         }
     }
 
@@ -81,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         final static String postKey1 = "phone";
         final static String postKey2 = "password";
         URL url = null;
-        String response1 = "";
+        String response = "";
         final String jsonRequestParams = "request_params";
         final String jsonId = "id";
         final String jsonAccessToken = "access_token";
@@ -91,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
         final String jsonDriverType = "driver_type";
         private String[] strResponseArray = new String[6];
 
+        //получение String[] из JSON
         protected String[] getDataFromJson(String responseString){
             try {
                 JSONObject responseObject = new JSONObject(responseString);
@@ -101,9 +106,8 @@ public class LoginActivity extends AppCompatActivity {
                 strResponseArray[3] = jsonReqParamObj.optString(jsonFirstName);
                 strResponseArray[4] = jsonReqParamObj.optString(jsonLastName);
                 strResponseArray[5] = jsonReqParamObj.optString(jsonDriverType);
-             }catch (JSONException e){
-                Log.e(LOG_TAG, e.getMessage());
-                e.printStackTrace();
+            }catch (JSONException e){
+                Log.e(LOG_TAG, "JSON exception: ", e);
             }
             return strResponseArray;
         }
@@ -112,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
             HttpURLConnection connection = null;
             try{
                 url = new URL("http://api.gotob.by/v1/auth/driver");
+                //установка соединения
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setConnectTimeout(15000);
                 connection.setReadTimeout(10000);
@@ -119,11 +124,13 @@ public class LoginActivity extends AppCompatActivity {
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
 
+                //добавление логина и пароля в запрос
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter(postKey1, "+79265400077")
                         .appendQueryParameter(postKey2, "1234");
                 String query = builder.build().getEncodedQuery();
 
+                //отправка лоигна и пароля
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 writer.write(query);
@@ -132,26 +139,28 @@ public class LoginActivity extends AppCompatActivity {
                 os.close();
 
                 int responseCode = connection.getResponseCode();
-
+                Log.e(LOG_TAG, "Response code - " + responseCode);
+                //чтение входящего потока в случае успешного подключения
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
                     String line;
                     BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     while ((line=br.readLine()) != null) {
-                        response1+=line;
+                        response +=line;
                     }
+                    br.close();
+
                 }
 
-                Log.e("OLALA",response1);
-                //connection.connect();
-                return getDataFromJson(response1);
+                //возвращаем полученные данные в String
+                return getDataFromJson(response);
 
             }catch (IOException e){
-                e.printStackTrace();
+                Log.e(LOG_TAG, "Error: ", e);
             }finally {
-                connection.disconnect();
+                if (connection!= null)
+                    connection.disconnect();
             }
             return null;
         }
     }
-
 }

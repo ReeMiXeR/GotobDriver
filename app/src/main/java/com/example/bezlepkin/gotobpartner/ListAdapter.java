@@ -9,9 +9,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by Teacher on 04.07.2016.
- */
+
 public class ListAdapter extends BaseAdapter{
     Context ctx;
     LayoutInflater lInflater;
@@ -53,8 +51,7 @@ public class ListAdapter extends BaseAdapter{
 
         DriverFragment.TripsInfo p = getProduct(position);
 
-        // заполняем View в пункте списка данными из товаров: наименование, цена
-        // и картинка
+        // заполняем View в пункте списка
         ((TextView) view.findViewById(R.id.trip_id_view)).setText(p.id);
         ((TextView) view.findViewById(R.id.depart_time_view)).setText(p.departure_time);
         ((TextView) view.findViewById(R.id.arrive_time_view)).setText(p.arrival_time);
@@ -66,7 +63,6 @@ public class ListAdapter extends BaseAdapter{
         return view;
     }
 
-    // товар по позиции
     DriverFragment.TripsInfo getProduct(int position) {
         return ((DriverFragment.TripsInfo) getItem(position));
     }

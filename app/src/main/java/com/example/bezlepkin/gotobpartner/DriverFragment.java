@@ -23,13 +23,11 @@ import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
-/**
- * Created by Teacher on 02.07.2016.
- */
+
 public class DriverFragment extends Fragment {
     String[][] strTripData = new String[10][];
     final static String LOG_TAG = DriverFragment.class.getSimpleName();
-    ArrayList<TripsInfo> tripsInfos = new ArrayList<TripsInfo>();
+    ArrayList<TripsInfo> tripsInfoArray = new ArrayList<TripsInfo>();
     ListAdapter adapter;
 
     @Override
@@ -39,55 +37,33 @@ public class DriverFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //String strDriverData = getActivity().getIntent().getExtras().getString("strDriverData");
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String id = sharedPreferences.getString("id", "null");
-        Log.e(LOG_TAG, "id - " + id);
+        String id = sharedPreferences.getString("id", null);
 
-
-        RoadTripTask task = new RoadTripTask();
+        //создаем объект asynctask и получаем из него string[][] инфомации о поездках
+        DriverTripTask task = new DriverTripTask();
         try {
             strTripData = task.execute(id).get();
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        String _id;
-        String _departure_time;
-        String _arrival_time;
-        String _depart_point;
-        String _arrival_point;
-        String _seats;
-        String _price;
 
         for(int i = 0; i < 8; i++){
-            Log.e(LOG_TAG, "1 - ok");
-            _id = strTripData[i][0];
-            _departure_time = strTripData[i][1];
-            _arrival_time = strTripData[i][2];
-            _depart_point = strTripData[i][3];
-            _arrival_point = strTripData[i][4];
-            _seats = strTripData[i][5];
-            _price = strTripData[i][6];
-
-            Log.e(LOG_TAG, "2 - ok");
-            tripsInfos.add(new TripsInfo(_id, _departure_time, _arrival_time, _depart_point, _arrival_point, _seats, _price));
-            Log.e(LOG_TAG, "3 - ok");
+            tripsInfoArray.add(new TripsInfo(strTripData, i));
         }
 
         View rootView = inflater.inflate(R.layout.driver_fragment, container, false);
-        adapter = new ListAdapter(getActivity(), tripsInfos);
+        adapter = new ListAdapter(getActivity(), tripsInfoArray);
 
         ListView listView = (ListView) rootView.findViewById(R.id.driver_list_view);
         listView.setAdapter(adapter);
 
-
-
         return rootView;
     }
 
-    private class RoadTripTask extends AsyncTask <String, Void, String[][]>{
-        final String LOG_TAG = RoadTripTask.class.getSimpleName();
+    private class DriverTripTask extends AsyncTask <String, Void, String[][]>{
+        final String LOG_TAG = DriverTripTask.class.getSimpleName();
         final String jsonTripId = "id";
         final String jsonDepartDate = "departure_date";
         final String jsonArriveDate = "arrival_date";
@@ -97,63 +73,66 @@ public class DriverFragment extends Fragment {
         final String jsonPrice = "price";
 
 
-        protected String[][] GetDataFromJson(String responseString) throws JSONException{
-                JSONArray jsonArray = new JSONArray(responseString);
-                String[][] dataArry = new String[10][10];
-                for (int i = 0; i < jsonArray.length(); i++){
-                    JSONObject jsonTripObj = jsonArray.getJSONObject(i);
-                    dataArry[i][0] = jsonTripObj.optString(jsonTripId, "null");
-                    dataArry[i][1] = jsonTripObj.optString(jsonDepartDate,  "null");
-                    dataArry[i][2] = jsonTripObj.optString(jsonArriveDate,  "null");
-                    dataArry[i][3] = jsonTripObj.optString(jsonDepartPoint,  "null");
-                    dataArry[i][4] = jsonTripObj.optString(jsonArrivalPoint,  "null");
-                    dataArry[i][5] = jsonTripObj.optString(jsonSeats, "null");
-                    dataArry[i][6] = jsonTripObj.optString(jsonPrice, "null");
-                    Log.e(LOG_TAG, "RESP -" + dataArry[i][0] + " - " + dataArry[i][1] + " - " + dataArry[i][2] + " - " + dataArry[i][3] + " - " + dataArry[i][4]);
+        protected String[][] getDataFromJson(String responseString) throws JSONException{
+            JSONArray jsonArray = new JSONArray(responseString);
+            String[][] dataArray = new String[10][10];
+            for (int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonTripObj = jsonArray.getJSONObject(i);
+                dataArray[i][0] = jsonTripObj.optString(jsonTripId, "null");
+                dataArray[i][1] = jsonTripObj.optString(jsonDepartDate,  "null");
+                dataArray[i][2] = jsonTripObj.optString(jsonArriveDate,  "null");
+                dataArray[i][3] = jsonTripObj.optString(jsonDepartPoint,  "null");
+                dataArray[i][4] = jsonTripObj.optString(jsonArrivalPoint,  "null");
+                dataArray[i][5] = jsonTripObj.optString(jsonSeats, "null");
+                dataArray[i][6] = jsonTripObj.optString(jsonPrice, "null");
                 }
-                return dataArry;
+            return dataArray;
 
         }
-
         @Override
         protected String[][] doInBackground(String... strings) {
-            String strUrl = "http://api.gotob.by/v1/trips?driver_id=";
-            String strId = strings[0];
+            final String strUrl = "http://api.gotob.by/v1/trips?driver_id=";
             String strResponse = "";
+            String strId = strings[0];
+            HttpURLConnection connection = null;
+
+            //проверка на передачу id в asynctask
+            if(strId == null){
+                return null;
+            }
 
             try {
                 URL url = new URL(strUrl + strId);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                //открываем соединение
+                connection = (HttpURLConnection) url.openConnection();
                 connection.setReadTimeout(10000);
                 connection.setConnectTimeout(15000);
                 connection.setRequestMethod("GET");
                 connection.setDoInput(true);
 
                 int responseCode = connection.getResponseCode();
-
-                Log.e(LOG_TAG, "response code - " + responseCode);
-
-
+                Log.e(LOG_TAG, "Response code - " + responseCode);
+                //при удачном подключении записиь ответа в strResponse
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
                     String line;
-                    BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     while ((line=br.readLine()) != null) {
                         strResponse+=line;
                     }
+                    br.close();
                 }
-
-                Log.e(LOG_TAG,strResponse);
-                connection.disconnect();
-
-                return GetDataFromJson(strResponse);
+                return getDataFromJson(strResponse);
             }catch(Exception e){
-                Log.e(LOG_TAG, e.toString());
-                e.printStackTrace();
+                Log.e(LOG_TAG, "Error: ", e);
+            }finally{
+                if (connection != null)
+                    connection.disconnect();
             }
             return null;
         }
     }
 
+    //класс для загрузки информации о рейсе в listView с помощью listAdapter
     public class TripsInfo{
         String id;
         String departure_time;
@@ -162,14 +141,15 @@ public class DriverFragment extends Fragment {
         String arrival_point;
         String seats;
         String price;
-        TripsInfo(String _id, String _departure_time, String _arrival_time, String _depart_point, String _arrival_point, String _seats, String _price){
-            id = _id;
-            departure_time = _departure_time;
-            arrival_time = _arrival_time;
-            depart_point = _depart_point;
-            arrival_point = _arrival_point;
-            seats = _seats;
-            price = _price;
+
+        TripsInfo(String[][] strTripData, int num){
+            id = strTripData[num][0];
+            departure_time = strTripData[num][1];
+            arrival_time = strTripData[num][2];
+            depart_point = strTripData[num][3];
+            arrival_point = strTripData[num][4];
+            seats = strTripData[num][5];
+            price = strTripData[num][6];
         }
     }
 }
