@@ -1,4 +1,4 @@
-package com.example.bezlepkin.gotobpartner;
+package ru.busride.partner;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

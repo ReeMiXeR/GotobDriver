@@ -1,4 +1,4 @@
-package com.example.bezlepkin.gotobpartner;
+package ru.busride.partner;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -37,10 +38,10 @@ public class FrontActivity extends AppCompatActivity {
         }catch (InterruptedException | ExecutionException e){
             Log.e(LOG_TAG, "IEException: ", e);
         }
-        //если токен прошел проверка - переход на DriverActivity
+        //если токен прошел проверка - переход на NavigationActivity
         if (checkAnswer == true){
-            Intent intent = new Intent(this, DriverActivity.class);
-            //startActivity(intent);
+            Intent intent = new Intent(this, NavigationActivity.class);
+            startActivity(intent);
         }
 
         setContentView(R.layout.front_activity);
@@ -66,15 +67,17 @@ public class FrontActivity extends AppCompatActivity {
 
     //класс для отправки запроса на сервер, на вход - токен, на выходе true/false
     private class testRequest extends AsyncTask<String, Void, Boolean>{
+
         @Override
         protected Boolean doInBackground(String... strings) {
-
             HttpURLConnection connection = null;
             Boolean taskResponse = null;
             if (strings[0] == null){
                 return taskResponse = false;
             }
+
             try{
+
                 URL url = new URL("http://api.busride.ru/v1/auth/check");
                 //открытие подключения
                 connection = (HttpURLConnection) url.openConnection();
@@ -84,8 +87,6 @@ public class FrontActivity extends AppCompatActivity {
                 connection.setDoOutput(true);
                 //добавление токена в заголовок
                 connection.setRequestProperty("Authorization", "Bearer "+ strings[0]);
-                connection.setRequestProperty("cache-control", "no-cache");
-                connection.setRequestProperty("postman-token", "22794fec-c24d-e051-2f72-004eb45cae9e");
 
                 //проверка кода ответа
                 int responseCode = connection.getResponseCode();
@@ -105,5 +106,6 @@ public class FrontActivity extends AppCompatActivity {
             }
 
         }
+
     }
 }

@@ -1,16 +1,21 @@
-package com.example.bezlepkin.gotobpartner;
+package ru.busride.partner;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     final static String LOG_TAG = LoginActivity.class.getSimpleName();
     private String login_str = null;
     private String password_str = null;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
             //отправка данных на сервер и получение ответа
             AsyncTaskRunner task = new AsyncTaskRunner();
             String[] strDriverData = new String[6];
+
             try {
                 strDriverData = task.execute("a").get();
             }catch (Exception e) {
@@ -67,10 +74,22 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString("id", strDriverData[0]);
                 editor.apply();
 
-                //запуск DriverActivity
-                Intent intent = new Intent(this, DriverActivity.class);
+                //запуск NavigationActivity
+                Intent intent = new Intent(this, NavigationActivity.class);
                 startActivity(intent);
             }
+            else{
+                new AlertDialog.Builder(this)
+                        .setTitle("Ошибка")
+                        .setMessage("Введен неверный логин или пароль.")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                            }
+                        })
+                        .show();
+            }
+
         }
     }
 
@@ -93,10 +112,12 @@ public class LoginActivity extends AppCompatActivity {
         final String jsonFirstName = "first_name";
         final String jsonLastName = "last_name";
         final String jsonDriverType = "driver_type";
+        final String jsonErrorCode = "error_code";
         private String[] strResponseArray = new String[6];
 
-        //получение String[] из JSON
+
         protected String[] getDataFromJson(String responseString){
+            //получение String[] из JSON
             try {
                 JSONObject responseObject = new JSONObject(responseString);
                 JSONObject jsonReqParamObj = responseObject.getJSONObject(jsonRequestParams);
@@ -112,9 +133,24 @@ public class LoginActivity extends AppCompatActivity {
             return strResponseArray;
         }
 
+        protected Boolean responseCheck(String response){
+            try {
+                JSONObject responseObject = new JSONObject(response);
+                int responseCode = responseObject.getInt(jsonErrorCode);
+                if (responseCode != 200)
+                    return false;
+                else
+                    return true;
+            } catch (JSONException e){
+                Log.e(LOG_TAG, "response check error: ", e);
+            }
+            return true;
+        }
+
         protected String[] doInBackground(String... params) {
             HttpURLConnection connection = null;
             try{
+                Thread.sleep(1500);
                 url = new URL("http://api.gotob.by/v1/auth/driver");
                 //установка соединения
                 connection = (HttpURLConnection) url.openConnection();
@@ -129,7 +165,6 @@ public class LoginActivity extends AppCompatActivity {
                         .appendQueryParameter(postKey1, "+79265400077")
                         .appendQueryParameter(postKey2, "1234");
                 String query = builder.build().getEncodedQuery();
-
                 //отправка лоигна и пароля
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
@@ -139,22 +174,24 @@ public class LoginActivity extends AppCompatActivity {
                 os.close();
 
                 int responseCode = connection.getResponseCode();
-                Log.e(LOG_TAG, "Response code - " + responseCode);
                 //чтение входящего потока в случае успешного подключения
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
                     String line;
-                    BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     while ((line=br.readLine()) != null) {
                         response +=line;
                     }
                     br.close();
-
                 }
-
+                boolean errorCode = responseCheck(response);
+                if (errorCode != true){
+                    return null;
+                }
+                else{
                 //возвращаем полученные данные в String
-                return getDataFromJson(response);
-
-            }catch (IOException e){
+                    return getDataFromJson(response);
+                }
+            }catch (Exception e){
                 Log.e(LOG_TAG, "Error: ", e);
             }finally {
                 if (connection!= null)
@@ -162,5 +199,6 @@ public class LoginActivity extends AppCompatActivity {
             }
             return null;
         }
+
     }
 }

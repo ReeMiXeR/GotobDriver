@@ -1,6 +1,6 @@
-package com.example.bezlepkin.gotobpartner;
+package ru.busride.partner;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,8 +24,8 @@ import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
-
 public class DriverFragment extends Fragment {
+
     String[][] strTripData = new String[10][];
     final static String LOG_TAG = DriverFragment.class.getSimpleName();
     ArrayList<TripsInfo> tripsInfoArray = new ArrayList<TripsInfo>();
@@ -47,7 +48,6 @@ public class DriverFragment extends Fragment {
         }catch (Exception e){
             e.printStackTrace();
         }
-
 
         for(int i = 0; i < 8; i++){
             tripsInfoArray.add(new TripsInfo(strTripData, i));

@@ -13,6 +13,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
+            android:hint="Номер телефона"
             android:ems="10"
             android:id="@+id/login_text"
             android:layout_gravity="left|top" />
@@ -21,6 +22,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:hint="Пароль"
             android:ems="10"
             android:id="@+id/password_text"
             android:layout_gravity="center_horizontal|top"
