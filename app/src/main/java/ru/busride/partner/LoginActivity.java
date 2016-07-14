@@ -56,12 +56,16 @@ public class LoginActivity extends AppCompatActivity {
             EditText password_view = (EditText) findViewById(R.id.password_text);
             password_str = password_view.getText().toString();
 
+            if (login_str == null | password_str == null){
+                return;
+            }
+
             //отправка данных на сервер и получение ответа
             AsyncTaskRunner task = new AsyncTaskRunner();
             String[] strDriverData = new String[6];
 
             try {
-                strDriverData = task.execute("a").get();
+                strDriverData = task.execute(login_str, password_str).get();
             }catch (Exception e) {
                 Log.e(LOG_TAG, "Error: ", e);
             }
@@ -147,11 +151,13 @@ public class LoginActivity extends AppCompatActivity {
             return true;
         }
 
-        protected String[] doInBackground(String... params) {
+        protected String[] doInBackground(String... strings) {
             HttpURLConnection connection = null;
+            String strLog = strings[0];
+            String strPass = strings[1];
             try{
                 Thread.sleep(1500);
-                url = new URL("http://api.gotob.by/v1/auth/driver");
+                url = new URL("http://api.busride.ru/v1/auth/driver");
                 //установка соединения
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setConnectTimeout(15000);
@@ -162,8 +168,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 //добавление логина и пароля в запрос
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter(postKey1, "+79265400077")
-                        .appendQueryParameter(postKey2, "1234");
+                        .appendQueryParameter(postKey1, strLog)
+                        .appendQueryParameter(postKey2, strPass);
                 String query = builder.build().getEncodedQuery();
                 //отправка лоигна и пароля
                 OutputStream os = connection.getOutputStream();

@@ -43,7 +43,7 @@ public class NavigationActivity extends ActionBarActivity {
 
         // Set the adapter for the list view
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, mScreenTitles));
+                R.layout.drawer_list_row, mScreenTitles));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 

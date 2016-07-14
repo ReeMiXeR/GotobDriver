@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:weightSum="1">
 
     <FrameLayout
@@ -10,39 +11,41 @@
         android:padding="16dp">
 
         <EditText
+            android:id="@+id/login_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:hint="Номер телефона"
+            android:layout_gravity="left|top"
             android:ems="10"
-            android:id="@+id/login_text"
-            android:layout_gravity="left|top" />
+            android:hint="Номер телефона"
+            android:inputType="phone"
+            android:text="+79265400077" />
 
         <EditText
+            android:id="@+id/password_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="Пароль"
-            android:ems="10"
-            android:id="@+id/password_text"
             android:layout_gravity="center_horizontal|top"
-            android:layout_marginTop="60dp" />
+            android:layout_marginTop="60dp"
+            android:ems="10"
+            android:hint="Пароль"
+            android:inputType="textPassword"
+            android:text="1234" />
 
         <Button
+            android:id="@+id/button_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Войти"
-            android:onClick="buttonClickedLogin"
-            android:id="@+id/button_login"
-            android:background="#e99f0b"
-            android:textColor="#ffffff"
-            android:textSize="15dp"
-            android:textStyle="bold"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="150dp"
             android:layout_gravity="right|top"
-            android:elegantTextHeight="true" />
+            android:layout_marginTop="150dp"
+            android:background="#e99f0b"
+            android:elegantTextHeight="true"
+            android:onClick="buttonClickedLogin"
+            android:text="Войти"
+            android:textColor="#ffffff"
+            android:textSize="15dp"
+            android:textStyle="bold" />
     </FrameLayout>
 </LinearLayout>

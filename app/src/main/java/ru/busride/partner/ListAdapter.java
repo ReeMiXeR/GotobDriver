@@ -47,7 +47,7 @@ public class ListAdapter extends BaseAdapter{
         // используем созданные, но не используемые view
         View view = convertView;
         if (view == null) {
-            view = lInflater.inflate(R.layout.driver_list_view, parent, false);
+            view = lInflater.inflate(R.layout.driver_list_view_row, parent, false);
         }
 
         DriverFragment.TripsInfo p = getProduct(position);

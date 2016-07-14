@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +25,37 @@ import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class DriverFragment extends Fragment {
+public class DriverFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     String[][] strTripData = new String[10][];
     final static String LOG_TAG = DriverFragment.class.getSimpleName();
     ArrayList<TripsInfo> tripsInfoArray = new ArrayList<TripsInfo>();
     ListAdapter adapter;
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String id = sharedPreferences.getString("id", null);
+
+        //создаем объект asynctask и получаем из него string[][] инфомации о поездках
+        DriverTripTask task = new DriverTripTask();
+        try {
+            task.execute(id);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        tripsInfoArray.clear();
+
+        for(int i = 0; i < 8; i++){
+            tripsInfoArray.add(new TripsInfo(strTripData, i));
+        }
+
+        adapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,11 +82,16 @@ public class DriverFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.driver_fragment, container, false);
         adapter = new ListAdapter(getActivity(), tripsInfoArray);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         ListView listView = (ListView) rootView.findViewById(R.id.driver_list_view);
         listView.setAdapter(adapter);
 
         return rootView;
     }
+
+
 
     private class DriverTripTask extends AsyncTask <String, Void, String[][]>{
         final String LOG_TAG = DriverTripTask.class.getSimpleName();
@@ -91,7 +122,7 @@ public class DriverFragment extends Fragment {
         }
         @Override
         protected String[][] doInBackground(String... strings) {
-            final String strUrl = "http://api.gotob.by/v1/trips?driver_id=";
+            final String strUrl = "http://api.busride.ru/v1/trips?driver_id=";
             String strResponse = "";
             String strId = strings[0];
             HttpURLConnection connection = null;
@@ -121,6 +152,7 @@ public class DriverFragment extends Fragment {
                     }
                     br.close();
                 }
+
                 return getDataFromJson(strResponse);
             }catch(Exception e){
                 Log.e(LOG_TAG, "Error: ", e);
@@ -132,8 +164,9 @@ public class DriverFragment extends Fragment {
         }
     }
 
-    //класс для загрузки информации о рейсе в listView с помощью listAdapter
+
     public class TripsInfo{
+        //класс для загрузки информации о рейсе в listView с помощью listAdapter
         String id;
         String departure_time;
         String arrival_time;

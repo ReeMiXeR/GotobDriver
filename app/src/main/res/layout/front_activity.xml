@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FrontFragment"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".FrontActivity">
 
     <ImageView
         android:id="@+id/background"
@@ -23,44 +24,44 @@
             android:id="@+id/logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/logo"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+            android:layout_gravity="top|center_horizontal"
             android:layout_marginTop="112dp"
-            android:layout_gravity="top|center_horizontal" />
+            android:src="@drawable/logo" />
 
         <Button
+            android:id="@+id/login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/enter_main"
-            android:id="@+id/login"
-            android:onClick="buttonClickMain"
-            android:background="#e99f0b"
-            android:textColor="#ffffff"
-            android:textSize="15dp"
-            android:textStyle="bold"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="70dp"
             android:layout_gravity="right|bottom"
-            android:elegantTextHeight="true" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/registration_main"
-            android:id="@+id/signup"
-            android:textStyle="bold"
+            android:layout_marginBottom="70dp"
+            android:background="#e99f0b"
+            android:elegantTextHeight="true"
             android:onClick="buttonClickMain"
+            android:text="@string/enter_main"
             android:textColor="#ffffff"
             android:textSize="15dp"
-            android:background="#6a4d15"
-            android:layout_alignParentStart="true"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/signup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_above="@+id/button"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="right|bottom"
             android:layout_marginBottom="15dp"
-            android:layout_gravity="right|bottom" />
+            android:background="#6a4d15"
+            android:onClick="buttonClickMain"
+            android:text="@string/registration_main"
+            android:textColor="#ffffff"
+            android:textSize="15dp"
+            android:textStyle="bold" />
 
     </FrameLayout>
 
