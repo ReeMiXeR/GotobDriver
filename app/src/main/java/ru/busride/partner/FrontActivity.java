@@ -58,7 +58,7 @@ public class FrontActivity extends AppCompatActivity {
                 Intent intent_singUp = new Intent();
                 intent_singUp.setAction(Intent.ACTION_VIEW);
                 intent_singUp.addCategory(Intent.CATEGORY_BROWSABLE);
-                intent_singUp.setData(Uri.parse("http://partners.gotob.by"));
+                intent_singUp.setData(Uri.parse("http://partners.busride.ru"));
                 startActivity(intent_singUp);
                 return true;
         }

@@ -27,7 +27,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class DriverFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    String[][] strTripData = new String[10][];
+    String[][] strTripData = new String[20][];
     final static String LOG_TAG = DriverFragment.class.getSimpleName();
     ArrayList<TripsInfo> tripsInfoArray = new ArrayList<TripsInfo>();
     ListAdapter adapter;
@@ -41,8 +41,9 @@ public class DriverFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
         //создаем объект asynctask и получаем из него string[][] инфомации о поездках
         DriverTripTask task = new DriverTripTask();
+
         try {
-            task.execute(id);
+            strTripData = task.execute(id).get();
         }catch (Exception e){
             e.printStackTrace();
         }
