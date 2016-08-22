@@ -59,11 +59,6 @@ public class DriverFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String id = sharedPreferences.getString("id", null);
@@ -91,8 +86,6 @@ public class DriverFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
         return rootView;
     }
-
-
 
     private class DriverTripTask extends AsyncTask <String, Void, String[][]>{
         final String LOG_TAG = DriverTripTask.class.getSimpleName();

@@ -11,31 +11,34 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-        <activity android:name="ru.busride.partner.FrontActivity"
+        <activity android:name=".SplashActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+
+        <activity android:name="ru.busride.partner.FrontActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait" >
+
         </activity>
 
         <activity android:name="ru.busride.partner.LoginActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:label="Авторизация"
             android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+
         </activity>
 
         <activity android:name="ru.busride.partner.NavigationActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:label="Меню"
             android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+
         </activity>
 
 

@@ -8,7 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class ListAdapter extends BaseAdapter{
@@ -50,22 +53,34 @@ public class ListAdapter extends BaseAdapter{
             view = lInflater.inflate(R.layout.driver_list_view_row, parent, false);
         }
 
-        DriverFragment.TripsInfo p = getProduct(position);
+        DriverFragment.TripsInfo infoArray = getProduct(position);
 
         // заполняем View в пункте списка
-        ((TextView) view.findViewById(R.id.trip_id_view)).setText(p.id);
-        ((TextView) view.findViewById(R.id.depart_time_view)).setText(p.departure_time);
-        ((TextView) view.findViewById(R.id.arrive_time_view)).setText(p.arrival_time);
-        ((TextView) view.findViewById(R.id.depart_point_view)).setText(p.depart_point);
-        ((TextView) view.findViewById(R.id.arrive_point_view)).setText(p.arrival_point);
-        ((TextView) view.findViewById(R.id.seats_view)).setText(p.seats);
-        ((TextView) view.findViewById(R.id.price_view)).setText(p.price);
+        ((TextView) view.findViewById(R.id.trip_id_view)).setText(infoArray.id);
+        ((TextView) view.findViewById(R.id.depart_time_view)).setText(dateFormat(infoArray.departure_time));
+        ((TextView) view.findViewById(R.id.arrive_time_view)).setText(dateFormat(infoArray.arrival_time));
+        ((TextView) view.findViewById(R.id.depart_point_view)).setText(infoArray.depart_point);
+        ((TextView) view.findViewById(R.id.arrive_point_view)).setText(infoArray.arrival_point);
+        ((TextView) view.findViewById(R.id.seats_view)).setText(infoArray.seats);
+        ((TextView) view.findViewById(R.id.price_view)).setText(infoArray.price);
 
         return view;
     }
 
     DriverFragment.TripsInfo getProduct(int position) {
         return ((DriverFragment.TripsInfo) getItem(position));
+    }
+
+    private String dateFormat(String date){
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm dd MMMM");
+            Date newDate = inputFormat.parse(date);
+            return outputFormat.format(newDate);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
